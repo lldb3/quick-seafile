@@ -71,6 +71,7 @@ services:
       - ./data/seafile_data:/shared/seafile   # Seafile data persistent store.
       - ./data/seafile_logs:/shared/logs   # Seafile log directory
       - ./config/nginx:/shared/nginx:ro   # nginx configuration
+      - ./scripts:/opt/scripts
     environment:
       - PUID=$PUID
       - PGID=$PGID
