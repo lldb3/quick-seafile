@@ -73,8 +73,6 @@ services:
       - ./config/nginx:/shared/nginx:ro   # nginx configuration
       - ./scripts:/opt/scripts
     environment:
-      - PUID=$PUID
-      - PGID=$PGID
       - DB_HOST=db
       - DB_ROOT_PASSWD=$DB_MARIADB_PASSWORD
       - TIME_ZONE=$TIME_ZONE
@@ -86,3 +84,20 @@ services:
       - db
       - memcached
       - elasticsearch
+
+
+### Optional Office Preview
+  office-preview:
+    image: seafileltd/office-preview:latest
+    container_name: seafile-office-preview
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      - seafile
+    ports:
+      - "8089:8089"
+    command: bash start.sh
+    volumes:
+      - ./data/office-preview/shared:/shared 
+
