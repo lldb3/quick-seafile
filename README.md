@@ -23,10 +23,21 @@ Or change the file in the `./data/seafile_data/conf/` directory.
 
 Then restart the seafile container for changes to take effect.
 
-#### Services and Ports
+### Office Preview
 
-| Service | Port | Use |  Necessary |
-| --- | --- | --- | --- |
-| seafile | 9080 | Browser access to Seafile by http | Y |
-| onlyoffice-document-server | 9002 | Browser access to ONLYOFFICE Document by http | N |
-| mariadb | 3306 | Accessing MySQL database with TCP | Y |
+[Official Docs](https://manual.seafile.com/deploy_pro/office_documents_preview/)
+
+Create `./data/office-preview/shared/office_convertor_settings.py` with:
+```shell
+# Make sure the SECRET_KEY is the same as value in seahub_settings.py
+SECRET_KEY = "o@^yktib39k+oor2_busbcxqaach_$b5zq-)4l6l39v#8ky5ta"  
+
+WORKERS = 10                   # worker number
+OUTPUT_DIR = '/shared/output'  # output folder in container
+PORT = 8089                    # port in container
+
+```
+
+**Change the seahub_settings.py** to match `OFFICE_CONVERTOR_ROOT = 'http://127.0.0.1:8089'`
+
+Restart both containers.
