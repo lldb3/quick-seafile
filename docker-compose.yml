@@ -20,7 +20,7 @@ services:
       - MYSQL_LOG_CONSOLE=true
       - TIME_ZONE=$TIME_ZONE
     volumes:
-      - ./data/mysql:/var/lib/mysql
+      - $DATADIR/mysql:/var/lib/mysql
 
   memcached:
     image: memcached:$DB_MEMCACHED_VERSION
@@ -66,12 +66,14 @@ services:
       - no-new-privileges:true
     ports:
       - "$SEAFILE_HTTP_PORT:80"
-      - "$SEAFILE_HTTPS_PORT:443"  # Only uncomment if using HTTPS
+      - "$SEAFILE_HTTPS_PORT:443"  # Only if using HTTPS
     volumes:
-      - ./data/seafile_data:/shared/seafile   # Seafile data persistent store.
-      - ./data/seafile_logs:/shared/logs   # Seafile log directory
-      - ./config/nginx:/shared/nginx:ro   # nginx configuration
+      - $CONFIGDIR/seafile:/shared/seafile/conf  # configuration files
+      - $CONFIGDIR/nginx:/shared/nginx:ro   # nginx configuration files
+      - $STORAGE_DIR:/shared/seafile/ # data for seafile and seahub
       - ./scripts:/opt/scripts
+      - $DATADIR/seafile_logs:/shared/logs   # Seafile log directory
+
     environment:
       - DB_HOST=db
       - DB_ROOT_PASSWD=$DB_MARIADB_PASSWORD
@@ -99,5 +101,5 @@ services:
       - "8089:8089"
     command: bash start.sh
     volumes:
-      - ./data/office-preview/shared:/shared 
+      - $DATADIR/office-preview/shared:/shared 
 
