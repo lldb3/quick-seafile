@@ -1,2 +1,12 @@
 #!/bin/bash
-sed -i -e 's/http/https/g' /shared/seafile/conf/seahub && echo "Done :) " || echo "Fail :("
+set -o errexit
+
+if [[ -f /opt/seafile/conf/seahub_settings.py ]]; then
+    echo "Changing http to https in seahub_settings.py"
+    sed -i -e 's#http://#https://#g' /opt/seafile/conf/seahub_settings.p
+    /opt/seafile/seafile-server-latest/seahub.sh restart
+else 
+    echo "File not found: /opt/seafile/conf/seahub_settings.py. Exiting.."
+    exit 1
+fi
+
