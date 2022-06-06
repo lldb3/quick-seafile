@@ -3,6 +3,7 @@
 ## Intro
 
 This repo is a quickstart seafile instance, designed to easilly be used with a separate reverse proxy, it is basic by default but can be customized to suit your needs. 
+**NB:** office preview did not work with cloudflare proxy.
 
 
 ### Nginx / HTTPS config
@@ -18,7 +19,7 @@ A set of [scripts](./scripts/) to help make changes to the seafile instance with
 
 #### Backup Script
 
-Handy script to backup the entire seafile data. **Must be run from the root project folder**. 
+Handy [script](./scripts/seafile_backup.sh) to backup the entire seafile data. **Must be run from the root project folder**. 
 
 #### Seahub HTTPS
 
@@ -29,24 +30,11 @@ docker-compose exec seafile /opt/scripts/seahub_https.sh
 ```
 This will switch server URL to https, and restart seahub.
 
-### Office Preview
+#### Office Preview
 
 [Official Docs](https://manual.seafile.com/deploy_pro/office_documents_preview/)
 
-Create `./data/office-preview/shared/office_convertor_settings.py` with:
-```shell
-# Make sure the SECRET_KEY is the same as value in seahub_settings.py
-SECRET_KEY = "o@^yktib39k+oor2_busbcxqaach_$b5zq-)4l6l39v#8ky5ta"  
-
-WORKERS = 10                   # worker number
-OUTPUT_DIR = '/shared/output'  # output folder in container
-PORT = 8089                    # port in container
-
-```
-
-**Change the seahub_settings.py** to match `OFFICE_CONVERTOR_ROOT = 'http://127.0.0.1:8089'`
-
-Restart both containers.
+Use [this script](./scripts/setup_office_preview.sh) to enable office preview functionality. Use it from the root project folder.
 
 
 ## Extra Documentation
