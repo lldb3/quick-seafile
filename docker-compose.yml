@@ -88,17 +88,17 @@ services:
 
 
 ### Optional Office Preview
-  office-preview:
-    image: seafileltd/office-preview:latest
-    container_name: seafile-office-preview
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    depends_on:
-      - seafile
-    ports:
-      - "8089:8089"
-    command: bash start.sh
-    volumes:
-      - $DATADIR/office-preview/shared:/shared 
+  # office-preview:
+  #   image: seafileltd/office-preview:latest
+  #   container_name: seafile-office-preview
+  #   restart: unless-stopped
+  #   security_opt:
+  #     - no-new-privileges:true
+  #   depends_on:
+  #     - seafile
+  #   ports:
+  #     - "8089:8089"
+  #   command: bash start.sh
+  #   volumes:
+  #     - $DATADIR/office-preview/shared:/shared 
 
