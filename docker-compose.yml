@@ -68,9 +68,8 @@ services:
       - "$SEAFILE_HTTP_PORT:80"
       - "$SEAFILE_HTTPS_PORT:443"  # Only if using HTTPS
     volumes:
-      - $CONFIGDIR/seafile:/shared/seafile/conf  # configuration files
       - $CONFIGDIR/nginx:/shared/nginx:ro   # nginx configuration files
-      - $STORAGE_DIR:/shared/seafile/ # data for seafile and seahub
+      - $DATADIR/seafile_data:/shared/seafile/ # data for seafile and seahub
       - ./scripts:/opt/scripts
       - $DATADIR/seafile_logs:/shared/logs   # Seafile log directory
 
