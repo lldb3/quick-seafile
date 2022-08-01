@@ -1,15 +1,13 @@
 version: '3.7'
 
-volumes:
-  elasticsearch_data:
 networks:
   default:
-      name: "$SEAFILE_NAME"
+      name: "seaf"
 
 services:
   db:
     image: mariadb:$DB_MARIADB_VERSION
-    container_name: $SEAFILE_NAME-db
+    container_name: seaf-db
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -24,7 +22,7 @@ services:
 
   memcached:
     image: memcached:$DB_MEMCACHED_VERSION
-    container_name: $SEAFILE_NAME-memcached
+    container_name: seaf-memcached
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -32,35 +30,10 @@ services:
     environment:
       - TIME_ZONE=$TIME_ZONE
 
-
-  elasticsearch:
-    image: elasticsearch:$DB_ELASTICSEARCH_VERSION
-    container_name: $SEAFILE_NAME-elasticsearch
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    environment:
-      - discovery.type=single-node
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
-      - TIME_ZONE=$TIME_ZONE
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-    volumes:
-      # Elasticsearch data persistent store. 
-      # Don't use local mount, it will mess up permissions (elasticsearch uses elasticsearch user with 1000:1000 UID:GID)
-      - elasticsearch_data:/usr/share/elasticsearch/data  
-
       
   seafile:
     image: $SEAFILE_REPO:$SEAFILE_VERSION
-    container_name: $SEAFILE_NAME
+    container_name: seaf
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -69,23 +42,20 @@ services:
       - "$SEAFILE_HTTPS_PORT:443"  # Only if using HTTPS
     volumes:
       - $CONFIGDIR/nginx:/shared/nginx:ro   # nginx configuration files
-      - $DATADIR/seafile_data:/shared/seafile/ # data for seafile and seahub
-      - ./scripts:/opt/scripts
-      - $DATADIR/seafile_logs:/shared/logs   # Seafile log directory
-
+      - $SEAFILE_DATADIR/seafile_data:/shared/seafile/ # data for seafile and seahub
+      - $DATADIR/seafile_logs:/shared/logs/   # Seafile logs directory
+      - ./scripts:/opt/scripts # custom scripts for post-deployment
     environment:
       - DB_HOST=db
       - DB_ROOT_PASSWD=$DB_MARIADB_PASSWORD
       - TIME_ZONE=$TIME_ZONE
-      - SEAFILE_ADMIN_EMAIL=$SEAFILE_USER
-      - SEAFILE_ADMIN_PASSWORD=$SEAFILE_PASSWORD    
+      - SEAFILE_ADMIN_EMAIL=$SEAFILE_ADMIN_EMAIL
+      - SEAFILE_ADMIN_PASSWORD=$SEAFILE_ADMIN_PASSWORD  
+      - SEAFILE_SERVER_HOSTNAME=$SEAFILE_SERVER_HOSTNAME  
       - SEAFILE_SERVER_LETSENCRYPT=false
-      - SEAFILE_SERVER_HOSTNAME=$SEAFILE_HOST_URL
     depends_on:
       - db
       - memcached
-      - elasticsearch
-
 
 ### Optional Office Preview
   # office-preview:
