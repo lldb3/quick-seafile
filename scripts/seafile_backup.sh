@@ -32,4 +32,4 @@ done
 
 DURATION=$(( $(date +%s) - ${START} ))
 
-echo "Done, backup took "$DURATION"s"
+echo "Done, backup took ${DURATION}s"
