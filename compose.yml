@@ -7,6 +7,8 @@ networks:
 services:
   db:
     image: mariadb:$DB_MARIADB_VERSION
+    uid: 525286
+    gid: 525286
     container_name: seaf-db
     restart: unless-stopped
     security_opt:
@@ -39,7 +41,7 @@ services:
       - no-new-privileges:true
     ports:
       - "$SEAFILE_HTTP_PORT:80"
-      - "$SEAFILE_HTTPS_PORT:443"  # Only if using HTTPS
+      # - "$SEAFILE_HTTPS_PORT:443"  # Only if using HTTPS
     volumes:
       - $CONFIGDIR/nginx:/shared/nginx:Z              # nginx configuration files
       - $DATADIR/seafile_data:/shared/seafile/:Z       # data for seafile and seahub
