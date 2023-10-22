@@ -2,28 +2,28 @@ version: '3.9'
 
 networks:
   default:
-      name: "seaf"
+      name: "main-net"
+      external: true
 
 services:
   db:
-    image: mariadb:$DB_MARIADB_VERSION
-    uid: 525286
-    gid: 525286
+    image: mariadb:latest
     container_name: seaf-db
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    ports:
-      - $DB_MARIADB_PORT:3306
+    # ports:
+    #   - $DB_MARIADB_PORT:3306
+    user: $RUNAS_USER
     environment:
       - MYSQL_ROOT_PASSWORD=$DB_MARIADB_PASSWORD
       - MYSQL_LOG_CONSOLE=true
       - TIME_ZONE=$TIME_ZONE
     volumes:
-      - $DATADIR/mysql:/var/lib/mysql:Z
+      - $DATADIR/mysql:/var/lib/mysql
 
   memcached:
-    image: memcached:$DB_MEMCACHED_VERSION
+    image: memcached:latest
     container_name: seaf-memcached
     restart: unless-stopped
     security_opt:
@@ -37,17 +37,21 @@ services:
     image: $SEAFILE_REPO:$SEAFILE_VERSION
     container_name: seaf
     restart: unless-stopped
+    # user: $RUNAS_USER
     security_opt:
       - no-new-privileges:true
-    ports:
-      - "$SEAFILE_HTTP_PORT:80"
+    # ports:
+    #   - "$SEAFILE_HTTP_PORT:80"
       # - "$SEAFILE_HTTPS_PORT:443"  # Only if using HTTPS
     volumes:
-      - $CONFIGDIR/nginx:/shared/nginx:Z              # nginx configuration files
-      - $DATADIR/seafile_data:/shared/seafile/:Z       # data for seafile and seahub
-      - $DATADIR/seafile_logs:/shared/logs/:Z         # Seafile logs directory
-      - ./scripts:/opt/scripts:Z                       # custom scripts for post-deployment
+      - $CONFIGDIR/nginx:/shared/nginx             # nginx configuration files
+      - $DATADIR/seafile_data:/shared/seafile/       # data for seafile and seahub
+      - $DATADIR/seafile_logs:/shared/logs/         # Seafile logs directory
+      - ./scripts:/opt/scripts                       # custom scripts for post-deployment
     environment:
+      - NON_ROOT=true
+      - PUID=$PUID
+      - GUID=$PGID
       - DB_HOST=db
       - DB_ROOT_PASSWD=$DB_MARIADB_PASSWORD
       - TIME_ZONE=$TIME_ZONE
